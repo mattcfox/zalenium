@@ -137,7 +137,7 @@ WaitTestingBotProxy()
 export -f WaitTestingBotProxy
 
 WaitForVideosTransferred() {
-    local __amount_of_tests_with_video=$(jq .executedTestsWithVideo /home/seluser/videos/executedTestsInfo.json)
+    local __amount_of_tests_with_video=$(grep -o '"videoRecorded":true' dashboardData.json | wc -l)
 
     if [ ${__amount_of_tests_with_video} -gt 0 ]; then
         local __amount_of_mp4_files=$(ls -1q /home/seluser/videos/*.mp4 | wc -l)
@@ -383,6 +383,7 @@ StartUp()
     -role hub -port 4445 -servlet de.zalando.ep.zalenium.servlet.LivePreviewServlet \
     -servlet de.zalando.ep.zalenium.servlet.ZaleniumConsoleServlet \
     -servlet de.zalando.ep.zalenium.servlet.ZaleniumResourceServlet \
+    -servlet de.zalando.ep.zalenium.servlet.CleanupService \
     -debug ${DEBUG_ENABLED} > logs/stdout.zalenium.hub.log &
     echo $! > ${PID_PATH_SELENIUM}
 
